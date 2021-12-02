@@ -6,6 +6,8 @@ import gamelistener.GameEventListener_Death;
 import gamelistener.GameEventListener_Join;
 import gamelistener.GameEventListener_Quit;
 import gamelistener.GameEventListener_SayCommand;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer.SanitizationStrategy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -175,13 +177,16 @@ public class DiscordBridgeMain extends JavaPlugin implements Listener {
         log.info("<" + author + "> " + msg);
     }
 
+    private static final MarkdownSanitizer MARKDOWN_ESCAPER = new MarkdownSanitizer().withStrategy(SanitizationStrategy.ESCAPE);
+    private static final MarkdownSanitizer MARKDOWN_REMOVER = new MarkdownSanitizer().withStrategy(SanitizationStrategy.REMOVE);
+
     /**
      * Sanitizes user input to from Discord chat ensure it is a valid JSON string and can safely be inserted into Minecraft chat.
      * @param unsafe: String, The raw data to be sanitized
      * @return String, The escaped data
      */
     private String sanitizeMessageForGame(String unsafe) {
-        return JSONValue.escape(ChatColor.stripColor(unsafe));
+        return JSONValue.escape(MARKDOWN_REMOVER.compute(ChatColor.stripColor(unsafe)));
     }
 
     /**
@@ -214,14 +219,14 @@ public class DiscordBridgeMain extends JavaPlugin implements Listener {
 
         bot.sendMessageOnChannel(writeChannelID, discordMsg);
     }
-
+    
     /**
      * Sanitizes user input to ensure it can safely be inserted into Discord chat.
      * @param unsafe: String; The raw data to be sanitized
      * @return String; The escaped data
      */
     private String sanitizeMessageForDiscord(String unsafe) {
-        return ChatColor.stripColor(unsafe);
+        return MARKDOWN_ESCAPER.compute(ChatColor.stripColor(unsafe));
     }
 
     /**
