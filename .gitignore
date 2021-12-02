@@ -6,3 +6,5 @@ DiscordBridge.iml
 /.settings/
 /.classpath
 /.project
+/.gradle/
+/build/

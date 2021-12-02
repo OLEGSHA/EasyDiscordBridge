@@ -1,0 +1,71 @@
+plugins {
+    id 'java'
+}
+
+version = '1.1.0.0-SNAPSHOT'
+
+
+
+/*
+ * Bukkit, Spigot
+ */
+
+repositories {
+	maven {
+		url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+		
+		// As of Gradle 5.1, you can limit this to only those
+		// dependencies you expect from it
+		content {
+			includeGroup 'org.bukkit'
+			includeGroup 'org.spigotmc'
+		}
+	}
+	/*
+	 As Spigot-API depends on the Bungeecord ChatComponent-API,
+	we need to add the Sonatype OSS repository, as Gradle,
+	in comparison to maven, doesn't want to understand the ~/.m2
+	directory unless added using mavenLocal(). Maven usually just gets
+	it from there, as most people have run the BuildTools at least once.
+	This is therefore not needed if you're using the full Spigot/CraftBukkit,
+	or if you're using the Bukkit API.
+	*/
+	maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+	maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+	mavenLocal() // This is needed for CraftBukkit and Spigot.*/
+	
+}
+
+dependencies {
+	implementation 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT'
+}
+
+
+
+/*
+ * Discord Bot API
+ */
+ 
+repositories {
+	maven { url 'https://jitpack.io' }
+	mavenCentral()
+	maven { url = 'https://m2.dv8tion.net/releases' }
+}
+
+dependencies {
+	implementation 'com.github.TJPlaysNow:Discord-Bot-API---JDA:-SNAPSHOT'
+}
+
+
+
+/*
+ * JSON (dirty hack?)
+ */
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'com.googlecode.json-simple:json-simple:1.1'
+}
