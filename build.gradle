@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+	id 'java'
 }
 
 version = '1.1.0.0-SNAPSHOT'
@@ -52,14 +52,47 @@ repositories {
 	maven { url = 'https://m2.dv8tion.net/releases' }
 }
 
+def discordBotApi
+
 dependencies {
-	implementation 'com.github.TJPlaysNow:Discord-Bot-API---JDA:-SNAPSHOT'
+	discordBotApi = implementation 'com.github.TJPlaysNow:Discord-Bot-API---JDA:-SNAPSHOT'
 }
 
 
 
 /*
- * JSON (dirty hack?)
+ * Discord Bot API packaging
+ */
+
+tasks.register('fatJar', Jar) {
+    description 'Creates a "fat" JAR with Discord Bot API included.'
+    group 'build'
+    
+    // Resulting JAR suffix
+    archiveClassifier = 'all'
+
+    // Include our source
+    from sourceSets.main.output
+    
+    dependsOn configurations.runtimeClasspath
+    configurations.runtimeClasspath.files(discordBotApi).findAll { it.name.endsWith('jar') }.forEach {
+        from (zipTree(it)) {
+            duplicatesStrategy = 'exclude'
+			
+			// Files we don't want included from dependencies
+            exclude "META-INF/**"
+            exclude "*.yml"
+            exclude "mcmod.info"
+            exclude "module-info.class" // Top level only
+            exclude "logback.xml"
+        }
+    }
+}
+
+
+
+/*
+ * JSON (dirty hack? this should come with spigot but it doesnt :( )
  */
 
 repositories {
